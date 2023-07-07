@@ -2,7 +2,20 @@ param name string
 param location string
 param tags object = {}
 param appServicePlanId string
-param appSettings object = {}
+param cogServAccountName string
+param cogServResourceGroupName string
+
+//create a bicep resoucre that connects to an existing cognitive services account
+resource cognitiveServicesAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = {
+  name: cogServAccountName
+  scope: resourceGroup(cogServResourceGroupName)
+}
+
+//create the app settings for the app service
+var appSettings = {
+  'AzureOpenAIResourceName': cognitiveServicesAccount.name
+  'AzureOpenAIResourceKey': cognitiveServicesAccount.listKeys().key1
+}
 
 //create an appservice config appsettings object, include the reference to the parent object
 resource appServiceSettings 'Microsoft.Web/sites/config@2022-09-01' = {

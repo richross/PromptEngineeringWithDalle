@@ -16,6 +16,8 @@ param location string
 
 param cogServAccountName string
 
+param cogServAccountResourceGroupName string
+
 
 // Optional parameters to override the default azd resource naming conventions.
 // Add the following to main.parameters.json to provide values:
@@ -45,7 +47,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
 }
 
 resource rgExisting 'Microsoft.Resources/resourceGroups@2022-09-01' existing = {
-  name: 'OpenAIExperiment'
+  name: cogServAccountResourceGroupName
 }
 
 // Add resources to be provisioned below.
@@ -63,22 +65,6 @@ module appServicePlan './app/appservice.bicep' = {
   }
 }
 
-//generate a bicep resource that connects to an existing Azure OpenAI Service
-module cogServ 'services/cogServ.bicep' = {
-  name: 'cogServ'
-  scope: rgExisting
-  params: {
-    name: cogServAccountName
-  }
-}
-
-//create the app settings for the app service
-var appSettings = {
-  'AzureOpenAIResourceName': cogServ.outputs.name
-  'AzureOpenAIResourceKey': cogServ.outputs.endpoint
-}
-
-
 //generate a bicep module to define the app service
 module appService './app/app.bicep' = {
   name: 'appService'
@@ -88,11 +74,10 @@ module appService './app/app.bicep' = {
     location: location
     tags: tags
     appServicePlanId: appServicePlan.outputs.appServicePlanId
-    appSettings: appSettings
+    cogServAccountName: cogServAccountName
+    cogServResourceGroupName: cogServAccountResourceGroupName
   }
 }
-
-
 
 // Add outputs from the deployment here, if needed.
 //

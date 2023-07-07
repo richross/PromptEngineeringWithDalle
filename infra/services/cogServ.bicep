@@ -8,3 +8,4 @@ resource cognitiveServicesAccount 'Microsoft.CognitiveServices/accounts@2023-05-
 
 //output the values needed for the configuration of the web app
 output name string = cognitiveServicesAccount.name
+// output secureKey string = 

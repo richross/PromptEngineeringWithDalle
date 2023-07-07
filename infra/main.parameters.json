@@ -13,6 +13,9 @@
       },
       "cogServAccountName": {
         "value": "${AZURE_COG_SERV_ACCT_NAME}"
+      },
+      "cogServAccountResourceGroupName": {
+        "value": "${AZURE_COG_SERV_ACCOUT_RG_NAME}"
       }
     }
 }
