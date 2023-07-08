@@ -1,4 +1,9 @@
 # Prompt Engineering With DALL-E
+## Description
+This is a fork of the original project created by Jennifer Marsman.  This fork includes files and folder structure to deploy this application into an Azure subscription.
+Please note that in the Overview section 'I' refers to Jennifer and not me. :)
+
+## Overview
 Learn prompt engineering by iterating over image prompts with the DALL-E model.  
 
 The motivation behind this demo is to help teach the concept of prompt engineering.  I used DALL-E for two reasons:
@@ -15,4 +20,29 @@ Here's a screenshot of the website.  Originally, the image on the right is blank
 ## Setup
 You will need an Azure OpenAI resource.  You can create a resource following the instructions at https://learn.microsoft.com/azure/cognitive-services/openai/how-to/create-resource.  
 
+## Local Deployment
 Clone this repo.  In the appsettings.json file, replace the values for "AzureOpenAIResourceName" and "AzureOpenAIResourceKey" with your corresponding resource name and key from the Azure OpenAI service.  These values can be found at the [Azure portal](https://portal.azure.com).  The resource name is not the full https://my-aoai.openai.azure.com/ endpoint, but just the value "my-aoai".  
+
+## Azure Deployment
+You can deploy this project to an Azure App Service.  This project includes the Azure Developer CLI constructs to make that process easier.  Install the Azure Developer CLI on you machine and provide the following values in the ./azure/PromptEngineeringWithDalle/env file.  
+```
+    AZURE_COG_SERV_ACCOUT_RG_NAME - name of the resource group where the Azure OpenAI resource is deployed.
+    AZURE_COG_SERV_ACCT_NAME - resource name of the Azure OpenAI resource.
+    AZURE_LOCATION - name of the location where resources will be deployed.  This should match the region of the Azure OpenAI instance.
+    AZURE_ENV_NAME - name of the environment.  Do not change this value.
+    AZURE_RESOURCE_GROUP="rg-PromptEngineeringWithDalle-dev"
+
+```
+Save the env file and open the command prompt (Ctrl + ` ) and run the following command.
+```
+    azd auth login
+    azd up
+```
+The bicep scripts in the infra folder of the project will create a resource group, an app service plan, connect to the existing Azure OpenAI resource, populate the appSettings with the appropriate values for Azure OpenAI name and key, create the app service, and deploy the code to the app service.  
+
+Once you are finished using this demo in Azure, run the following command to remove the items.
+```
+    azd down
+```
+
+NOTE: An Azure App Service is a public url by default.  This means anyone can access your app if they know it.  The app uses the Azure OpenAI resource, which is a paid service.  If you are not using the app, you should delete the app service so it is not publicly accessible.
